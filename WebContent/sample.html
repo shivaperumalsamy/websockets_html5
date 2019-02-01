@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+   <meta charset = "utf-8" />
+   <title>WebSocket Test</title>
+	<head>
+	   <script language = "javascript" type = "text/javascript">
+	      var wsUri = "ws://172.19.16.158:8085/WebSocketTest/broadcast";
+	      var output;
+	      var websocket;
+		
+	      function init() {
+	         output = document.getElementById("output");
+	         testWebSocket();
+	      }
+		
+	      function testWebSocket() {
+	    	  	if (websocket !== undefined && websocket.readyState !== websocket.CLOSED) {
+	    			alert("websocket is already opened.");
+	    			return;
+	    		}
+	    	  
+	         websocket = new WebSocket(wsUri);
+				
+	         websocket.onopen = function(evt) {
+	        	 	console.log("Session open");
+	        	 	document.getElementById("output").innerHTML = "CONNECTED";
+	         };
+	         websocket.onmessage = function(event) {
+	        	 	console.log("Message received:"+event.data);
+	     		if(event.data != "Error")
+	     			writeResponse(event.data);
+	     	};
+	
+	     	websocket.onclose = function(event) {
+	     		console.log("Session closed");
+	     	};
+	      }
+		
+	      
+	      /*
+	      	Read data from UI and send to WebSocket
+	      */
+	      function add(){
+	    	  	var text = document.getElementById("input").value;
+	    	  	websocket.send(text);
+	    	  	document.getElementById("input").value = "";
+	      }
+	      
+	      /*
+	      	Write WebSocket Response in Screen
+	      */
+	      function writeResponse(text){
+	    	  	document.getElementById("message").innerHTML += "<br/>"+text;
+	      }
+	      window.addEventListener("load", init, false);
+	     
+	   
+	   </script>
+   </head>
+   <body>
+
+	   <h2>WebSocket Test</h2>
+	   <div id = "output"></div>
+	   <input type="text" id="input" />
+	   <input type="button" onclick="add();" value="Add" />
+	   <div id="message">
+	   </div>
+   </body>
+
+</html>
